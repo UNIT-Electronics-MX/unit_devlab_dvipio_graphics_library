@@ -184,6 +184,30 @@ Para mejorar el rendimiento:
 - La configuración correcta es: `pins_tmds = {14, 12, 8}`
 - NO cambies el orden sin probar con `devlab_color_test`
 
+## Ejemplos portados desde software/apps/
+
+Los siguientes ejemplos reimplementan demos de `software/apps/` (las apps
+originales en C puro sobre el SDK de Pico) usando la libreria Arduino
+(`DVIGFX8`/`DVIGFX16`/`DVIGFX1`), con la configuracion de pines DevLab.
+Ninguno usa `libsprite`/`libtile` (no estan incluidas en esta libreria
+Arduino) ni el streaming crudo por DMA que usan `vista`/`vista-palette`
+originales; cada `.ino` documenta en su cabecera que se cambio y por que.
+
+| Ejemplo                     | Original en software/apps/ | Notas |
+|------------------------------|-----------------------------|-------|
+| devlab_mandelbrot             | mandelbrot, mandel-full     | Fractal recalculado cada frame (sin generador incremental con deteccion de ciclos) |
+| devlab_moon                   | moon                        | Misma imagen 1bpp 640x480, dibujada con `drawBitmap()` |
+| devlab_sprite_bounce          | sprite_bounce                | Sprites con transparencia via `drawPixel()` + mascara 1-bit (sin rotacion afin) |
+| devlab_tiles                  | tiles                        | Mapa Zelda con auto-scroll diagonal, blit de tiles a mano |
+| devlab_tiles_and_sprites      | tiles_and_sprites            | Mapa + 12 personajes animados (el original usa 100). Usa `DVIGFX8` con doble buffer real (`swap()`) en vez de `DVIGFX16`, para evitar el parpadeo que causa dibujar sobre un framebuffer sin doble buffer |
+| devlab_tiles_parallax         | tiles_parallax                | Dos capas de tilemap con scroll a distinta velocidad |
+| devlab_vista_slideshow        | vista, vista-palette          | Carrusel de fotos reales a 320x240 embebidas en el sketch. **No** es un port 1:1: el original transmite imagenes por DMA crudo desde un blob de flash externo (`.uf2` aparte, offset fijo, boot_stage2 a medida) — nada de eso es posible desde el flujo de subida de Arduino |
+
+**No portado: `bad_apple`.** Requiere un video fuente (`src.mkv`), un
+pipeline de `ffmpeg`/PIL para generarlo, y un decodificador RLE en
+ensamblador ARM que escribe simbolos TMDS directamente (bypaseando el
+framebuffer). No hay forma honesta de reproducirlo sin esos insumos.
+
 ## Referencias
 
 - Biblioteca: upicodvi (fork de PicoDVI)
