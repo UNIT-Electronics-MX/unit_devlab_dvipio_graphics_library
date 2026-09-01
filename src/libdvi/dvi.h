@@ -48,6 +48,9 @@ struct dvi_inst {
 
 };
 
+
+
+
 #if defined(__cplusplus)
 extern "C"
 {

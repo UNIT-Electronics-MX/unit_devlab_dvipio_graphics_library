@@ -31,6 +31,23 @@ enum DVIresolution {
   DVI_RES_1280x720p30 // Experimenting, not working, plz don't use
 };
 
+/*!
+ * @brief Sprite structure for 16-bit color images with transparency mask.
+ *
+ * This structure represents a sprite with its image data, transparency mask,
+ * and dimensions. The image data is expected to be in 16-bit color format,
+ * and the mask is a binary representation indicating which pixels are
+ * transparent (0) or opaque (1).
+ *
+ * @note The width and height should match the dimensions of the image and mask.
+*/
+struct Sprite16 {
+	const uint16_t *img;
+	const uint8_t *mask;
+	uint16_t width;
+	uint16_t height;
+};
+
 extern uint8_t dvi_vertical_repeat; ///< In libdvi/dvi.c
 extern bool dvi_monochrome_tmds;    ///< In libdvi/dvi.c
 
@@ -127,6 +144,16 @@ public:
             needs to be public so that C code can access it.
   */
   void _scanline_callback(void);
+
+  /*!
+    @brief  Draw a sprite onto the framebuffer at the specified coordinates.
+    @param  x       The x-coordinate of the top-left corner where the sprite will be drawn.
+    @param  y       The y-coordinate of the top-left corner where the sprite will be drawn.
+    @param  sprite  A reference to a Sprite16 object containing the image data and mask for the sprite.
+    @note   The sprite will be drawn with transparency, meaning that pixels in the sprite's mask that are set to 0 will not overwrite the corresponding pixels in the framebuffer.
+    @warning Ensure that the sprite's dimensions do not exceed the boundaries of the framebuffer to avoid memory access violations.
+  */
+  void drawSprite(int16_t x, int16_t y, const Sprite16 &sprite,int SPRITE_SIZE);
 
 protected:
   uint16_t scanline = 2; ///< First 2 scanlines are set up before DVI start

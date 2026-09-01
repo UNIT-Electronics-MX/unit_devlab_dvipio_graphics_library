@@ -139,6 +139,16 @@ bool DVIGFX16::begin(void) {
   return false;
 }
 
+void DVIGFX16::drawSprite(int16_t x, int16_t y, const Sprite16 &sprite,int SPRITE_SIZE) {
+  const uint16_t *img = sprite.img;
+  const uint8_t *mask = sprite.mask;
+  const int srcSize = 128; // 128 bytes per row in the sprite image and mask
+  const int maskStride = (srcSize + 7) / 8; // Number of bytes per row in the mask
+
+  for(int dy = 0; dy < SPRITE_SIZE; dy++) {
+    
+  }
+}
 // DVIGFX8 (8-bit, color-indexed framebuffer) is all manner of dirty pool.
 // PicoDVI seems to have some palette support but I couldn't grasp the DMA
 // stuff going on, so just doing a brute force thing here for now: in
